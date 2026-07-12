@@ -1,9 +1,9 @@
 version: 2
 
 sources:
-  - name: northstyle
-    description: Raw Northstyle data loaded into Snowflake.
-    database: northstyle
+  - name: onemind
+    description: Raw onemind data loaded into Snowflake.
+    database: onemind
     schema: public
     quoting:
       database: false

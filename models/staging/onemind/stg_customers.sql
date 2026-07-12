@@ -1,6 +1,6 @@
 with source as (
     select *
-    from {{ source('northstyle', 'customers') }}
+    from {{ source('onemind', 'customers') }}
 ),
 
 renamed as (

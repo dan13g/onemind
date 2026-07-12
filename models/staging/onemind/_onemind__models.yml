@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: stg_customers
-    description: Standardized customer records from the Northstyle Snowflake source.
+    description: Standardized customer records from the onemind Snowflake source.
     columns:
       - name: customer_id
         description: Unique identifier for a customer.
