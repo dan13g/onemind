@@ -1,0 +1,115 @@
+version: 2
+
+models:
+  - name: hub_client
+    description: Data Vault hub containing one source-qualified client identity per source record.
+    columns:
+      - name: client_hk
+        tests: [not_null, unique]
+      - name: source_client_business_key
+        tests: [not_null, unique]
+      - name: record_source
+        tests: [not_null]
+
+  - name: sat_client_onemind
+    description: Historical descriptive satellite for OneMind clients.
+    columns:
+      - name: client_satellite_pk
+        tests: [not_null, unique]
+      - name: client_hk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_client')
+              field: client_hk
+      - name: hashdiff
+        tests: [not_null]
+
+  - name: sat_client_brightpath
+    description: Historical descriptive satellite for BrightPath clients.
+    columns:
+      - name: client_satellite_pk
+        tests: [not_null, unique]
+      - name: client_hk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_client')
+              field: client_hk
+      - name: hashdiff
+        tests: [not_null]
+
+  - name: bv_client_match
+    description: Accepted deterministic one-to-one matches between OneMind and BrightPath clients.
+    columns:
+      - name: onemind_client_hk
+        tests: [not_null, unique]
+      - name: brightpath_client_hk
+        tests: [not_null, unique]
+      - name: match_rule
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - NHS_NUMBER_EXACT
+                - EMAIL_DOB_EXACT
+                - PHONE_DOB_EXACT
+                - SURNAME_DOB_POSTCODE_EXACT
+      - name: match_score
+        tests:
+          - not_null
+          - accepted_values:
+              values: [80, 85, 90, 100]
+
+  - name: hub_master_client
+    description: Data Vault hub representing the unified real-world client.
+    columns:
+      - name: master_client_hk
+        tests: [not_null, unique]
+
+  - name: link_master_client_source_client
+    description: Link between mastered clients and their source-system client identities.
+    columns:
+      - name: master_client_source_client_lk
+        tests: [not_null, unique]
+      - name: master_client_hk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_master_client')
+              field: master_client_hk
+      - name: client_hk
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_client')
+              field: client_hk
+
+  - name: bv_master_client_current
+    description: One current mastered client record per master-client identity.
+    columns:
+      - name: master_client_hk
+        tests: [not_null, unique]
+      - name: source_system_count
+        tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2]
+
+  - name: dim_client
+    description: Current-state conformed Kimball client dimension.
+    columns:
+      - name: client_key
+        tests: [not_null, unique]
+      - name: master_client_hk
+        tests: [not_null, unique]
+      - name: source_system_count
+        tests:
+          - accepted_values:
+              values: [1, 2]
+
+  - name: semantic_client
+    description: Privacy-conscious secure client view for Power BI.
+    columns:
+      - name: client_key
+        tests: [not_null, unique]

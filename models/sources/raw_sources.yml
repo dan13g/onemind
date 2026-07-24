@@ -1,0 +1,30 @@
+version: 2
+
+sources:
+  - name: onemind_raw
+    description: OneMind operational tables landed by Fivetran.
+    database: ONEMIND_RAW_DB
+    schema: public
+    tables:
+      - name: onemind_clients
+        identifier: ONEMIND_CLIENTS
+        description: OneMind source-system clients.
+        columns:
+          - name: client_id
+            tests:
+              - not_null
+              - unique
+
+  - name: brightpath_raw
+    description: BrightPath acquisition tables landed by Fivetran.
+    database: ONEMIND_RAW_DB
+    schema: public
+    tables:
+      - name: brightpath_clients
+        identifier: BRIGHTPATH_CLIENTS
+        description: BrightPath source-system clients.
+        columns:
+          - name: client_key
+            tests:
+              - not_null
+              - unique

@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: stg_onemind__clients
+    description: Standardised OneMind client source.
+    columns:
+      - name: source_client_id
+        tests: [not_null, unique]
+      - name: source_client_business_key
+        tests: [not_null, unique]
+      - name: client_hk
+        tests: [not_null, unique]
+      - name: client_hashdiff
+        tests: [not_null]
+      - name: record_source
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ONEMIND']
+
+  - name: stg_brightpath__clients
+    description: Standardised BrightPath client source.
+    columns:
+      - name: source_client_id
+        tests: [not_null, unique]
+      - name: source_client_business_key
+        tests: [not_null, unique]
+      - name: client_hk
+        tests: [not_null, unique]
+      - name: client_hashdiff
+        tests: [not_null]
+      - name: record_source
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['BRIGHTPATH']
