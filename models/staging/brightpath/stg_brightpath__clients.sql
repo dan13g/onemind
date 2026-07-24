@@ -1,6 +1,20 @@
 with source as (
 
-    select *
+    select
+        "client_key" as client_key,
+        "nhs_no_raw" as nhs_no_raw,
+        "external_client_id" as external_client_id,
+        "given_name" as given_name,
+        "family_name" as family_name,
+        "dob" as dob,
+        "sex" as sex,
+        "email" as email,
+        "phone" as phone,
+        "postcode_raw" as postcode_raw,
+        "organisation_key" as organisation_key,
+        "marketing_opt_in" as marketing_opt_in,
+        "created_ts" as created_ts,
+        "modified_ts" as modified_ts
     from {{ source('brightpath_raw', 'brightpath_clients') }}
 
 ),
