@@ -1,6 +1,26 @@
 with source as (
 
-    select *
+    select
+        "client_id" as client_id,
+        "nhs_number" as nhs_number,
+        "local_client_ref" as local_client_ref,
+        "title" as title,
+        "first_name" as first_name,
+        "last_name" as last_name,
+        "date_of_birth" as date_of_birth,
+        "gender" as gender,
+        "email_address" as email_address,
+        "mobile_phone" as mobile_phone,
+        "address_line_1" as address_line_1,
+        "town_city" as town_city,
+        "postcode" as postcode,
+        "ethnicity" as ethnicity,
+        "registered_gp_org_id" as registered_gp_org_id,
+        "employer_org_id" as employer_org_id,
+        "consent_to_contact" as consent_to_contact,
+        "deceased_flag" as deceased_flag,
+        "created_at" as created_at,
+        "updated_at" as updated_at
     from {{ source('onemind_raw', 'onemind_clients') }}
 
 ),
