@@ -14,6 +14,7 @@ sources:
         description: OneMind source-system clients.
         columns:
           - name: client_id
+            quote: true
             tests:
               - not_null
               - unique
@@ -31,6 +32,7 @@ sources:
         description: BrightPath source-system clients.
         columns:
           - name: client_key
+            quote: true
             tests:
               - not_null
               - unique
