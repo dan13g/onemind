@@ -18,6 +18,7 @@ with source_data as (
         client_hashdiff                                         as hashdiff,
         current_timestamp()::timestamp_ntz                      as load_datetime,
         record_source,
+        source_created_at,
         source_updated_at,
 
         nhs_number_normalised,
