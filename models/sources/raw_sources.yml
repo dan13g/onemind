@@ -7,6 +7,7 @@ sources:
     schema: public
     quoting:
       schema: true
+      identifier: true
     tables:
       - name: onemind_clients
         identifier: onemind_clients
@@ -23,6 +24,7 @@ sources:
     schema: public
     quoting:
       schema: true
+      identifier: true
     tables:
       - name: brightpath_clients
         identifier: brightpath_clients
