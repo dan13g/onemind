@@ -16,7 +16,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['ONEMIND']
+              arguments:
+                values: ['ONEMIND']
 
   - name: stg_brightpath__clients
     description: Standardised BrightPath client source.
@@ -33,4 +34,5 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['BRIGHTPATH']
+              arguments:
+                values: ['BRIGHTPATH']

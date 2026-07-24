@@ -20,8 +20,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('hub_client')
-              field: client_hk
+              arguments:
+                to: ref('hub_client')
+                field: client_hk
       - name: hashdiff
         tests: [not_null]
 
@@ -34,8 +35,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('hub_client')
-              field: client_hk
+              arguments:
+                to: ref('hub_client')
+                field: client_hk
       - name: hashdiff
         tests: [not_null]
 
@@ -50,16 +52,18 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values:
-                - NHS_NUMBER_EXACT
-                - EMAIL_DOB_EXACT
-                - PHONE_DOB_EXACT
-                - SURNAME_DOB_POSTCODE_EXACT
+              arguments:
+                values:
+                  - NHS_NUMBER_EXACT
+                  - EMAIL_DOB_EXACT
+                  - PHONE_DOB_EXACT
+                  - SURNAME_DOB_POSTCODE_EXACT
       - name: match_score
         tests:
           - not_null
           - accepted_values:
-              values: [80, 85, 90, 100]
+              arguments:
+                values: [80, 85, 90, 100]
 
   - name: hub_master_client
     description: Data Vault hub representing the unified real-world client.
@@ -76,14 +80,16 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('hub_master_client')
-              field: master_client_hk
+              arguments:
+                to: ref('hub_master_client')
+                field: master_client_hk
       - name: client_hk
         tests:
           - not_null
           - relationships:
-              to: ref('hub_client')
-              field: client_hk
+              arguments:
+                to: ref('hub_client')
+                field: client_hk
 
   - name: bv_master_client_current
     description: One current mastered client record per master-client identity.
@@ -94,7 +100,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [1, 2]
+              arguments:
+                values: [1, 2]
 
   - name: dim_client
     description: Current-state conformed Kimball client dimension.
@@ -106,7 +113,8 @@ models:
       - name: source_system_count
         tests:
           - accepted_values:
-              values: [1, 2]
+              arguments:
+                values: [1, 2]
 
   - name: semantic_client
     description: Privacy-conscious secure client view for Power BI.
