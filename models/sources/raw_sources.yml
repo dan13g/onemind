@@ -5,6 +5,8 @@ sources:
     description: OneMind operational tables landed by Fivetran.
     database: ONEMIND_RAW_DB
     schema: public
+    quoting:
+      schema: true
     tables:
       - name: onemind_clients
         identifier: ONEMIND_CLIENTS
@@ -19,6 +21,8 @@ sources:
     description: BrightPath acquisition tables landed by Fivetran.
     database: ONEMIND_RAW_DB
     schema: public
+    quoting:
+      schema: true
     tables:
       - name: brightpath_clients
         identifier: BRIGHTPATH_CLIENTS
