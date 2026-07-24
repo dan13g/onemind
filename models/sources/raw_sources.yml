@@ -7,9 +7,10 @@ sources:
     schema: public
     quoting:
       schema: true
+      identifier: true
     tables:
       - name: onemind_clients
-        identifier: ONEMIND_CLIENTS
+        identifier: onemind_clients
         description: OneMind source-system clients.
         columns:
           - name: client_id
@@ -23,9 +24,10 @@ sources:
     schema: public
     quoting:
       schema: true
+      identifier: true
     tables:
       - name: brightpath_clients
-        identifier: BRIGHTPATH_CLIENTS
+        identifier: brightpath_clients
         description: BrightPath source-system clients.
         columns:
           - name: client_key
