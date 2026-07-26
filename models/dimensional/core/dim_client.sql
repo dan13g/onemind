@@ -44,7 +44,11 @@ with_age as (
         source_system_count,
         has_onemind_record,
         has_brightpath_record,
-        assignment_type
+        assignment_type,
+        match_rule,
+        match_score,
+        match_method,
+        assignment_datetime
 
     from mastered
 
@@ -91,6 +95,10 @@ dimension as (
         has_onemind_record,
         has_brightpath_record,
         assignment_type,
+        match_rule,
+        match_score,
+        match_method,
+        assignment_datetime,
 
         current_timestamp()::timestamp_ntz                       as dw_loaded_at
 
