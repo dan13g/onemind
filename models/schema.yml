@@ -20,9 +20,8 @@ models:
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('hub_client')
-                field: client_hk
+              to: ref('hub_client')
+              field: client_hk
       - name: hashdiff
         tests: [not_null]
 
@@ -35,14 +34,13 @@ models:
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('hub_client')
-                field: client_hk
+              to: ref('hub_client')
+              field: client_hk
       - name: hashdiff
         tests: [not_null]
 
-  - name: bv_client_match
-    description: Accepted deterministic one-to-one matches between OneMind and BrightPath clients.
+  - name: bv_client_deterministic_match
+    description: High-confidence exact matching rules applied before fuzzy matching.
     columns:
       - name: onemind_client_hk
         tests: [not_null, unique]
@@ -52,18 +50,74 @@ models:
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values:
-                  - NHS_NUMBER_EXACT
-                  - EMAIL_DOB_EXACT
-                  - PHONE_DOB_EXACT
-                  - SURNAME_DOB_POSTCODE_EXACT
-      - name: match_score
+              values:
+                - NHS_NUMBER_EXACT
+                - EMAIL_DOB_EXACT
+                - PHONE_DOB_EXACT
+                - SURNAME_DOB_POSTCODE_EXACT
+
+  - name: bv_client_fuzzy_candidates
+    description: Blocked candidate pairs for unmatched source clients with the same DOB and plausible name or postcode evidence.
+    columns:
+      - name: onemind_client_hk
+        tests: [not_null]
+      - name: brightpath_client_hk
+        tests: [not_null]
+      - name: first_name_similarity
+        tests: [not_null]
+      - name: last_name_similarity
+        tests: [not_null]
+
+  - name: bv_client_fuzzy_scored
+    description: Weighted fuzzy evidence and AUTO_MATCH, MANUAL_REVIEW or NO_MATCH decision.
+    columns:
+      - name: onemind_client_hk
+        tests: [not_null]
+      - name: brightpath_client_hk
+        tests: [not_null]
+      - name: fuzzy_match_score
+        tests: [not_null]
+      - name: fuzzy_match_decision
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values: [80, 85, 90, 100]
+              values: [AUTO_MATCH, MANUAL_REVIEW, NO_MATCH]
+
+  - name: bv_client_fuzzy_auto_match
+    description: Mutual-best high-confidence fuzzy matches accepted automatically.
+    columns:
+      - name: onemind_client_hk
+        tests: [not_null, unique]
+      - name: brightpath_client_hk
+        tests: [not_null, unique]
+      - name: match_method
+        tests:
+          - accepted_values:
+              values: [FUZZY]
+
+  - name: bv_client_review_queue
+    description: Ambiguous fuzzy candidates requiring human review before a merge decision.
+
+  - name: bv_client_match
+    description: Final accepted client matches combining deterministic and safeguarded fuzzy auto-matches.
+    columns:
+      - name: onemind_client_hk
+        tests: [not_null, unique]
+      - name: brightpath_client_hk
+        tests: [not_null, unique]
+      - name: match_rule
+        tests: [not_null]
+      - name: match_score
+        tests: [not_null]
+      - name: match_method
+        tests:
+          - not_null
+          - accepted_values:
+              values: [DETERMINISTIC, FUZZY]
+      - name: match_status
+        tests:
+          - accepted_values:
+              values: [AUTO_MATCHED]
 
   - name: hub_master_client
     description: Data Vault hub representing the unified real-world client.
@@ -80,16 +134,14 @@ models:
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('hub_master_client')
-                field: master_client_hk
+              to: ref('hub_master_client')
+              field: master_client_hk
       - name: client_hk
         tests:
           - not_null
           - relationships:
-              arguments:
-                to: ref('hub_client')
-                field: client_hk
+              to: ref('hub_client')
+              field: client_hk
 
   - name: bv_master_client_current
     description: One current mastered client record per master-client identity.
@@ -100,8 +152,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              arguments:
-                values: [1, 2]
+              values: [1, 2]
 
   - name: dim_client
     description: Current-state conformed Kimball client dimension.
@@ -113,8 +164,7 @@ models:
       - name: source_system_count
         tests:
           - accepted_values:
-              arguments:
-                values: [1, 2]
+              values: [1, 2]
 
   - name: semantic_client
     description: Privacy-conscious secure client view for Power BI.
