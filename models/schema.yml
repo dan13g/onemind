@@ -20,8 +20,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('hub_client')
-              field: client_hk
+              arguments:
+                to: ref('hub_client')
+                field: client_hk
       - name: hashdiff
         tests: [not_null]
 
@@ -34,8 +35,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('hub_client')
-              field: client_hk
+              arguments:
+                to: ref('hub_client')
+                field: client_hk
       - name: hashdiff
         tests: [not_null]
 
@@ -50,11 +52,12 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values:
-                - NHS_NUMBER_EXACT
-                - EMAIL_DOB_EXACT
-                - PHONE_DOB_EXACT
-                - SURNAME_DOB_POSTCODE_EXACT
+              arguments:
+                values:
+                  - NHS_NUMBER_EXACT
+                  - EMAIL_DOB_EXACT
+                  - PHONE_DOB_EXACT
+                  - SURNAME_DOB_POSTCODE_EXACT
 
   - name: bv_client_fuzzy_candidates
     description: Blocked candidate pairs for unmatched source clients with the same DOB and plausible name or postcode evidence.
@@ -81,7 +84,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [AUTO_MATCH, MANUAL_REVIEW, NO_MATCH]
+              arguments:
+                values: [AUTO_MATCH, MANUAL_REVIEW, NO_MATCH]
 
   - name: bv_client_fuzzy_auto_match
     description: Mutual-best high-confidence fuzzy matches accepted automatically.
@@ -93,7 +97,8 @@ models:
       - name: match_method
         tests:
           - accepted_values:
-              values: [FUZZY]
+              arguments:
+                values: [FUZZY]
 
   - name: bv_client_review_queue
     description: Ambiguous fuzzy candidates requiring human review before a merge decision.
@@ -113,11 +118,13 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [DETERMINISTIC, FUZZY]
+              arguments:
+                values: [DETERMINISTIC, FUZZY]
       - name: match_status
         tests:
           - accepted_values:
-              values: [AUTO_MATCHED]
+              arguments:
+                values: [AUTO_MATCHED]
 
   - name: hub_master_client
     description: Data Vault hub representing the unified real-world client.
@@ -134,14 +141,16 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('hub_master_client')
-              field: master_client_hk
+              arguments:
+                to: ref('hub_master_client')
+                field: master_client_hk
       - name: client_hk
         tests:
           - not_null
           - relationships:
-              to: ref('hub_client')
-              field: client_hk
+              arguments:
+                to: ref('hub_client')
+                field: client_hk
 
   - name: bv_master_client_current
     description: One current mastered client record per master-client identity.
@@ -152,7 +161,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [1, 2]
+              arguments:
+                values: [1, 2]
 
   - name: dim_client
     description: Current-state conformed Kimball client dimension.
@@ -164,7 +174,8 @@ models:
       - name: source_system_count
         tests:
           - accepted_values:
-              values: [1, 2]
+              arguments:
+                values: [1, 2]
 
   - name: semantic_client
     description: Privacy-conscious secure client view for Power BI.
