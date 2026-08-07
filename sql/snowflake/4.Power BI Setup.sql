@@ -22,7 +22,7 @@ DEFAULT_WAREHOUSE=BI_WH
 DEFAULT_NAMESPACE='ONEMIND_DIM_DW.SEMANTIC';
 
 ALTER USER SVC_POWERBI
-SET PASSWORD = 'StrongPa$$word13';
+SET PASSWORD = '************************';
 
 USE ROLE SECURITYADMIN;
 
@@ -86,7 +86,7 @@ select * from ONEMIND_DIM_DW.SEMANTIC.CLIENT;
 -- Connection details:
 -- Account: CPRCYYC-FB19926.snowflakecomputing.com
 -- User: SVC_POWERBI
--- Password: StrongPa$$word13
+-- Password: *******************
 -- Role: POWERBI_ROLE
 -- Warehouse: BI_WH
 -- Database: ONEMIND_DIM_DW
