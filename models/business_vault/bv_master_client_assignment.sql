@@ -1,7 +1,7 @@
 /*
     Assigns every source-client hub identity to one mastered client identity.
 
-    Accepted deterministic/fuzzy pairs share a MASTER_CLIENT_HK. Any source
+    Accepted deterministic pairs share a MASTER_CLIENT_HK. Any source
     client not present in an accepted pair receives its own stable master key.
     HUB_CLIENT, rather than a satellite-derived view, is the authoritative
     population of source clients.

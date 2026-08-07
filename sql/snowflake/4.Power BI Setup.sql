@@ -22,7 +22,7 @@ DEFAULT_WAREHOUSE=BI_WH
 DEFAULT_NAMESPACE='ONEMIND_DIM_DW.SEMANTIC';
 
 ALTER USER SVC_POWERBI
-SET PASSWORD = '************************';
+SET PASSWORD = 'StrongPa$$word13';
 
 USE ROLE SECURITYADMIN;
 
@@ -86,7 +86,7 @@ select * from ONEMIND_DIM_DW.SEMANTIC.CLIENT;
 -- Connection details:
 -- Account: CPRCYYC-FB19926.snowflakecomputing.com
 -- User: SVC_POWERBI
--- Password: *******************
+-- Password: StrongPa$$word13
 -- Role: POWERBI_ROLE
 -- Warehouse: BI_WH
 -- Database: ONEMIND_DIM_DW
@@ -98,3 +98,6 @@ USE ROLE SECURITYADMIN;
 -- Unlock the service account
 ALTER USER SVC_POWERBI SET MINS_TO_UNLOCK = 0;
 
+
+
+-- Book-aligned project: expose DIM_DATE, DIM_CLIENT, DIM_CLINICIAN, DIM_SERVICE, DIM_ORGANISATION, FACT_REFERRAL, FACT_ASSESSMENT, FACT_SESSION, FACT_OUTCOME, FACT_RISK_ASSESSMENT and FACT_GOAL from ONEMIND_DIM_DW.CORE.

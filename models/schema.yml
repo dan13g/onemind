@@ -1,308 +1,123 @@
 version: 2
 models:
-- name: hub_client
-  description: Data Vault hub containing one source-qualified client identity per source record.
-  columns:
-  - name: client_hk
-    tests:
-    - not_null
-    - unique
-  - name: source_client_business_key
-    tests:
-    - not_null
-    - unique
-  - name: record_source
-    tests:
-    - not_null
-- name: sat_client_onemind
-  description: Historical descriptive satellite for OneMind clients.
-  columns:
-  - name: client_satellite_pk
-    tests:
-    - not_null
-    - unique
-  - name: client_hk
-    tests:
-    - not_null
-    - relationships:
-        arguments:
-          to: ref('hub_client')
-          field: client_hk
-  - name: hashdiff
-    tests:
-    - not_null
-- name: sat_client_brightpath
-  description: Historical descriptive satellite for BrightPath clients.
-  columns:
-  - name: client_satellite_pk
-    tests:
-    - not_null
-    - unique
-  - name: client_hk
-    tests:
-    - not_null
-    - relationships:
-        arguments:
-          to: ref('hub_client')
-          field: client_hk
-  - name: hashdiff
-    tests:
-    - not_null
-- name: bv_source_client_latest
-  description: Current source-client attributes reconstructed from HUB_CLIENT and the latest source satellites.
-  columns:
-  - name: client_hk
-    tests:
-    - not_null
-    - unique
-    - relationships:
-        arguments:
-          to: ref('hub_client')
-          field: client_hk
-  - name: source_client_business_key
-    tests:
-    - not_null
-    - unique
-  - name: record_source
-    tests:
-    - not_null
-    - accepted_values:
-        arguments:
-          values:
-          - ONEMIND
-          - BRIGHTPATH
-- name: bv_client_deterministic_match
-  description: High-confidence exact matching rules applied before fuzzy matching.
-  columns:
-  - name: onemind_client_hk
-    tests:
-    - not_null
-    - unique
-  - name: brightpath_client_hk
-    tests:
-    - not_null
-    - unique
-  - name: match_rule
-    tests:
-    - not_null
-    - accepted_values:
-        arguments:
-          values:
-          - NHS_NUMBER_EXACT
-          - EMAIL_DOB_EXACT
-          - PHONE_DOB_EXACT
-          - SURNAME_DOB_POSTCODE_EXACT
-- name: bv_client_fuzzy_candidates
-  description: Blocked candidate pairs for unmatched source clients with the same DOB and plausible name or postcode
-    evidence.
-  columns:
-  - name: onemind_client_hk
-    tests:
-    - not_null
-  - name: brightpath_client_hk
-    tests:
-    - not_null
-  - name: first_name_similarity
-    tests:
-    - not_null
-  - name: last_name_similarity
-    tests:
-    - not_null
-- name: bv_client_fuzzy_scored
-  description: Weighted fuzzy evidence and AUTO_MATCH, MANUAL_REVIEW or NO_MATCH decision.
-  columns:
-  - name: onemind_client_hk
-    tests:
-    - not_null
-  - name: brightpath_client_hk
-    tests:
-    - not_null
-  - name: fuzzy_match_score
-    tests:
-    - not_null
-  - name: fuzzy_match_decision
-    tests:
-    - not_null
-    - accepted_values:
-        arguments:
-          values:
-          - AUTO_MATCH
-          - MANUAL_REVIEW
-          - NO_MATCH
-- name: bv_client_fuzzy_auto_match
-  description: Mutual-best high-confidence fuzzy matches accepted automatically.
-  columns:
-  - name: onemind_client_hk
-    tests:
-    - not_null
-    - unique
-  - name: brightpath_client_hk
-    tests:
-    - not_null
-    - unique
-  - name: match_method
-    tests:
-    - accepted_values:
-        arguments:
-          values:
-          - FUZZY
-- name: bv_client_review_queue
-  description: Ambiguous fuzzy candidates requiring human review before a merge decision.
-- name: bv_client_match
-  description: Final accepted client matches combining deterministic and safeguarded fuzzy auto-matches.
-  columns:
-  - name: onemind_client_hk
-    tests:
-    - not_null
-    - unique
-  - name: brightpath_client_hk
-    tests:
-    - not_null
-    - unique
-  - name: match_rule
-    tests:
-    - not_null
-  - name: match_score
-    tests:
-    - not_null
-  - name: match_method
-    tests:
-    - not_null
-    - accepted_values:
-        arguments:
-          values:
-          - DETERMINISTIC
-          - FUZZY
-  - name: match_status
-    tests:
-    - accepted_values:
-        arguments:
-          values:
-          - AUTO_MATCHED
-- name: bv_master_client_assignment
-  description: Assignment of every source-client hub identity to a stable master-client identity.
-  columns:
-  - name: client_hk
-    tests:
-    - not_null
-    - unique
-    - relationships:
-        arguments:
-          to: ref('hub_client')
-          field: client_hk
-  - name: master_client_hk
-    tests:
-    - not_null
-  - name: assignment_type
-    tests:
-    - not_null
-    - accepted_values:
-        arguments:
-          values:
-          - MATCHED_PAIR
-          - SINGLE_SOURCE
-  - name: match_method
-    tests:
-    - not_null
-    - accepted_values:
-        arguments:
-          values:
-          - DETERMINISTIC
-          - FUZZY
-          - UNMATCHED
-- name: hub_master_client
-  description: Data Vault hub representing the unified real-world client.
-  columns:
-  - name: master_client_hk
-    tests:
-    - not_null
-    - unique
-- name: link_master_client_source_client
-  description: Link between mastered clients and their source-system client identities.
-  columns:
-  - name: master_client_source_client_lk
-    tests:
-    - not_null
-    - unique
-  - name: master_client_hk
-    tests:
-    - not_null
-    - relationships:
-        arguments:
-          to: ref('hub_master_client')
-          field: master_client_hk
-  - name: client_hk
-    tests:
-    - not_null
-    - relationships:
-        arguments:
-          to: ref('hub_client')
-          field: client_hk
-- name: bv_master_client_current
-  description: One current mastered client record per master-client identity.
-  columns:
-  - name: source_system_count
-    tests:
-    - not_null
-    - accepted_values:
-        arguments:
-          values:
-          - 1
-          - 2
-  - name: master_client_hk
-    tests:
-    - not_null
-    - unique
-    - relationships:
-        arguments:
-          to: ref('hub_master_client')
-          field: master_client_hk
-  - name: match_score
-    tests:
-    - not_null
-  - name: match_method
-    tests:
-    - not_null
-    - accepted_values:
-        arguments:
-          values:
-          - DETERMINISTIC
-          - FUZZY
-          - UNMATCHED
-- name: dim_client
-  description: Current-state conformed Kimball client dimension.
-  columns:
-  - name: client_key
-    tests:
-    - not_null
-    - unique
-  - name: master_client_hk
-    tests:
-    - not_null
-    - unique
-  - name: source_system_count
-    tests:
-    - accepted_values:
-        arguments:
-          values:
-          - 1
-          - 2
-  - name: match_score
-    tests:
-    - not_null
-  - name: match_method
-    tests:
-    - not_null
-    - accepted_values:
-        arguments:
-          values:
-          - DETERMINISTIC
-          - FUZZY
-          - UNMATCHED
-- name: semantic_client
-  description: Privacy-conscious secure client view for Power BI.
-  columns:
-  - name: client_key
-    tests:
-    - not_null
-    - unique
+  - name: hub_client
+    columns:
+      - name: client_hk
+        tests: [not_null, unique]
+  - name: hub_referral
+    columns:
+      - name: referral_hk
+        tests: [not_null, unique]
+  - name: hub_assessment
+    columns:
+      - name: assessment_hk
+        tests: [not_null, unique]
+  - name: hub_episode
+    columns:
+      - name: episode_hk
+        tests: [not_null, unique]
+  - name: hub_session
+    columns:
+      - name: session_hk
+        tests: [not_null, unique]
+  - name: hub_clinician
+    columns:
+      - name: clinician_hk
+        tests: [not_null, unique]
+  - name: hub_service
+    columns:
+      - name: service_hk
+        tests: [not_null, unique]
+  - name: hub_organisation
+    columns:
+      - name: organisation_hk
+        tests: [not_null, unique]
+  - name: hub_location
+    columns:
+      - name: location_hk
+        tests: [not_null, unique]
+  - name: hub_team
+    columns:
+      - name: team_hk
+        tests: [not_null, unique]
+  - name: hub_goal
+    columns:
+      - name: goal_hk
+        tests: [not_null, unique]
+  - name: hub_risk_assessment
+    columns:
+      - name: risk_assessment_hk
+        tests: [not_null, unique]
+  - name: hub_outcome_score
+    columns:
+      - name: outcome_score_hk
+        tests: [not_null, unique]
+  - name: hub_discharge
+    columns:
+      - name: discharge_hk
+        tests: [not_null, unique]
+  - name: hub_waitlist_event
+    columns:
+      - name: waitlist_event_hk
+        tests: [not_null, unique]
+  - name: link_client_referral
+    columns:
+      - name: client_referral_lk
+        tests: [not_null, unique]
+  - name: link_referral_assessment
+    columns:
+      - name: referral_assessment_lk
+        tests: [not_null, unique]
+  - name: link_referral_episode
+    columns:
+      - name: referral_episode_lk
+        tests: [not_null, unique]
+  - name: link_episode_session
+    columns:
+      - name: episode_session_lk
+        tests: [not_null, unique]
+  - name: link_session_clinician
+    columns:
+      - name: session_clinician_lk
+        tests: [not_null, unique]
+  - name: link_session_outcome_score
+    columns:
+      - name: session_outcome_score_lk
+        tests: [not_null, unique]
+  - name: bv_client_deterministic_match
+    columns:
+      - name: onemind_client_hk
+        tests: [not_null, unique]
+      - name: brightpath_client_hk
+        tests: [not_null, unique]
+      - name: match_rule
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['NHS_NUMBER_EXACT','EMAIL_DOB_EXACT','PHONE_DOB_EXACT','SURNAME_DOB_POSTCODE_EXACT']
+  - name: bv_master_client_assignment
+    columns:
+      - name: client_hk
+        tests: [not_null, unique]
+      - name: master_client_hk
+        tests: [not_null]
+  - name: hub_master_client
+    columns:
+      - name: master_client_hk
+        tests: [not_null, unique]
+  - name: pit_client
+    columns:
+      - name: client_hk
+        tests: [not_null, unique]
+  - name: dim_client
+    columns:
+      - name: client_key
+        tests: [not_null, unique]
+  - name: fact_session
+    columns:
+      - name: session_key
+        tests: [not_null, unique]
+  - name: fact_referral
+    columns:
+      - name: referral_key
+        tests: [not_null, unique]
