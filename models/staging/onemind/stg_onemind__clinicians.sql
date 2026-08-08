@@ -1,3 +1,24 @@
+with source as (
+
+    select
+        "clinician_id" as clinician_id,
+        "staff_number" as staff_number,
+        "first_name" as first_name,
+        "last_name" as last_name,
+        "professional_role" as professional_role,
+        "registration_body" as registration_body,
+        "registration_number" as registration_number,
+        "team_id" as team_id,
+        "base_location_id" as base_location_id,
+        "employment_type" as employment_type,
+        "start_date" as start_date,
+        "leaving_date" as leaving_date,
+        "created_at" as created_at,
+        "updated_at" as updated_at
+    from {{ source('onemind_raw', 'onemind_clinicians') }}
+
+)
+
 select
     clinician_id::varchar as source_clinician_id,
     'ONEMIND|' || clinician_id::varchar as clinician_bk,
@@ -22,4 +43,4 @@ select
     iff(base_location_id is null, null, sha2('ONEMIND|' || base_location_id::varchar,256)) as base_location_hk,
     sha2(concat_ws('|',sha2('ONEMIND|' || clinician_id::varchar,256),iff(team_id is null, null, sha2('ONEMIND|' || team_id::varchar,256))),256) as clinician_team_lk,
     sha2(concat_ws('|',sha2('ONEMIND|' || clinician_id::varchar,256),iff(base_location_id is null, null, sha2('ONEMIND|' || base_location_id::varchar,256))),256) as clinician_location_lk
-from {{ source('onemind_raw', 'onemind_clinicians') }}
+from source

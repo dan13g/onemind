@@ -1,3 +1,20 @@
+with source as (
+
+    select
+        "assessment_id" as assessment_id,
+        "referral_id" as referral_id,
+        "assessor_clinician_id" as assessor_clinician_id,
+        "assessment_at" as assessment_at,
+        "assessment_type" as assessment_type,
+        "clinical_summary" as clinical_summary,
+        "recommended_service_id" as recommended_service_id,
+        "accepted_for_treatment" as accepted_for_treatment,
+        "created_at" as created_at,
+        "updated_at" as updated_at
+    from {{ source('onemind_raw', 'onemind_assessments') }}
+
+)
+
 select
     assessment_id::varchar as source_assessment_id,
     'ONEMIND|' || assessment_id::varchar as assessment_bk,
@@ -20,4 +37,4 @@ select
     sha2(concat_ws('|',sha2('ONEMIND|' || referral_id::varchar,256),sha2('ONEMIND|' || assessment_id::varchar,256)),256) as referral_assessment_lk,
     sha2(concat_ws('|',sha2('ONEMIND|' || assessment_id::varchar,256),iff(assessor_clinician_id is null, null, sha2('ONEMIND|' || assessor_clinician_id::varchar,256))),256) as assessment_clinician_lk,
     sha2(concat_ws('|',sha2('ONEMIND|' || assessment_id::varchar,256),iff(recommended_service_id is null, null, sha2('ONEMIND|' || recommended_service_id::varchar,256))),256) as assessment_service_lk
-from {{ source('onemind_raw', 'onemind_assessments') }}
+from source
