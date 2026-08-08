@@ -1,3 +1,18 @@
+with source as (
+
+    select
+        "risk_assessment_key" as risk_assessment_key,
+        "episode_key" as episode_key,
+        "flagged_ts" as flagged_ts,
+        "risk_domain" as risk_domain,
+        "risk_level" as risk_level,
+        "escalation_required" as escalation_required,
+        "created_ts" as created_ts,
+        "modified_ts" as modified_ts
+    from {{ source('brightpath_raw', 'brightpath_risk_assessments') }}
+
+)
+
 select
     risk_assessment_key::varchar as source_risk_assessment_id,
     'BRIGHTPATH|' || risk_assessment_key::varchar as risk_assessment_bk,
@@ -14,4 +29,4 @@ select
     current_timestamp()::timestamp_ntz as dbt_loaded_at,
     sha2(concat_ws('|',coalesce(flagged_ts::varchar,''),coalesce(risk_domain::varchar,''),coalesce(risk_level::varchar,''),coalesce(escalation_required::varchar,'')),256) as risk_assessment_hashdiff,
     sha2(concat_ws('|',sha2('BRIGHTPATH|' || episode_key::varchar,256),sha2('BRIGHTPATH|' || risk_assessment_key::varchar,256)),256) as episode_risk_assessment_lk
-from {{ source('brightpath_raw', 'brightpath_risk_assessments') }}
+from source

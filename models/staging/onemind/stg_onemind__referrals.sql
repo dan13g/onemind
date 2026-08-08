@@ -1,3 +1,23 @@
+with source as (
+
+    select
+        "referral_id" as referral_id,
+        "client_id" as client_id,
+        "referral_received_at" as referral_received_at,
+        "referral_source" as referral_source,
+        "referring_org_id" as referring_org_id,
+        "referred_by_name" as referred_by_name,
+        "presenting_problem" as presenting_problem,
+        "risk_level_at_referral" as risk_level_at_referral,
+        "priority" as priority,
+        "referral_status" as referral_status,
+        "service_id" as service_id,
+        "created_at" as created_at,
+        "updated_at" as updated_at
+    from {{ source('onemind_raw', 'onemind_referrals') }}
+
+)
+
 select
     referral_id::varchar as source_referral_id,
     'ONEMIND|' || referral_id::varchar as referral_bk,
@@ -23,4 +43,4 @@ select
     sha2(concat_ws('|',sha2('ONEMIND|' || client_id::varchar,256),sha2('ONEMIND|' || referral_id::varchar,256)),256) as client_referral_lk,
     sha2(concat_ws('|',sha2('ONEMIND|' || referral_id::varchar,256),iff(service_id is null, null, sha2('ONEMIND|' || service_id::varchar,256))),256) as referral_service_lk,
     sha2(concat_ws('|',sha2('ONEMIND|' || referral_id::varchar,256),iff(referring_org_id is null, null, sha2('ONEMIND|' || referring_org_id::varchar,256))),256) as referral_organisation_lk
-from {{ source('onemind_raw', 'onemind_referrals') }}
+from source

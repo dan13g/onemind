@@ -1,3 +1,21 @@
+with source as (
+
+    select
+        "session_key" as session_key,
+        "episode_key" as episode_key,
+        "clinician_key" as clinician_key,
+        "starts_at" as starts_at,
+        "duration_minutes" as duration_minutes,
+        "session_type" as session_type,
+        "contact_method" as contact_method,
+        "status_code" as status_code,
+        "notes_entered_flag" as notes_entered_flag,
+        "created_ts" as created_ts,
+        "modified_ts" as modified_ts
+    from {{ source('brightpath_raw', 'brightpath_sessions') }}
+
+)
+
 select
     session_key::varchar as source_session_id,
     'BRIGHTPATH|' || session_key::varchar as session_bk,
@@ -20,4 +38,4 @@ select
     sha2(concat_ws('|',coalesce(starts_at::varchar,''),coalesce(duration_minutes::varchar,''),coalesce(session_type::varchar,''),coalesce(contact_method::varchar,''),coalesce(status_code::varchar,''),coalesce(notes_entered_flag::varchar,'')),256) as session_hashdiff,
     sha2(concat_ws('|',sha2('BRIGHTPATH|' || episode_key::varchar,256),sha2('BRIGHTPATH|' || session_key::varchar,256)),256) as episode_session_lk,
     sha2(concat_ws('|',sha2('BRIGHTPATH|' || session_key::varchar,256),iff(clinician_key is null, null, sha2('BRIGHTPATH|' || clinician_key::varchar,256))),256) as session_clinician_lk
-from {{ source('brightpath_raw', 'brightpath_sessions') }}
+from source

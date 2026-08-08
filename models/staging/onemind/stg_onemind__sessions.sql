@@ -1,3 +1,23 @@
+with source as (
+
+    select
+        "session_id" as session_id,
+        "episode_id" as episode_id,
+        "clinician_id" as clinician_id,
+        "location_id" as location_id,
+        "session_start_at" as session_start_at,
+        "session_end_at" as session_end_at,
+        "session_type" as session_type,
+        "delivery_channel" as delivery_channel,
+        "attendance_status" as attendance_status,
+        "cancellation_reason" as cancellation_reason,
+        "clinical_notes_entered" as clinical_notes_entered,
+        "created_at" as created_at,
+        "updated_at" as updated_at
+    from {{ source('onemind_raw', 'onemind_sessions') }}
+
+)
+
 select
     session_id::varchar as source_session_id,
     'ONEMIND|' || session_id::varchar as session_bk,
@@ -24,4 +44,4 @@ select
     sha2(concat_ws('|',sha2('ONEMIND|' || episode_id::varchar,256),sha2('ONEMIND|' || session_id::varchar,256)),256) as episode_session_lk,
     sha2(concat_ws('|',sha2('ONEMIND|' || session_id::varchar,256),iff(clinician_id is null, null, sha2('ONEMIND|' || clinician_id::varchar,256))),256) as session_clinician_lk,
     sha2(concat_ws('|',sha2('ONEMIND|' || session_id::varchar,256),iff(location_id is null, null, sha2('ONEMIND|' || location_id::varchar,256))),256) as session_location_lk
-from {{ source('onemind_raw', 'onemind_sessions') }}
+from source

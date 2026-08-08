@@ -1,3 +1,20 @@
+with source as (
+
+    select
+        "episode_key" as episode_key,
+        "intake_key" as intake_key,
+        "episode_open_date" as episode_open_date,
+        "episode_close_date" as episode_close_date,
+        "main_condition_text" as main_condition_text,
+        "icd10_code" as icd10_code,
+        "close_reason" as close_reason,
+        "clinical_outcome" as clinical_outcome,
+        "created_ts" as created_ts,
+        "modified_ts" as modified_ts
+    from {{ source('brightpath_raw', 'brightpath_episodes') }}
+
+)
+
 select
     episode_key::varchar as source_episode_id,
     'BRIGHTPATH|' || episode_key::varchar as episode_bk,
@@ -16,4 +33,4 @@ select
     current_timestamp()::timestamp_ntz as dbt_loaded_at,
     sha2(concat_ws('|',coalesce(episode_open_date::varchar,''),coalesce(episode_close_date::varchar,''),coalesce(main_condition_text::varchar,''),coalesce(icd10_code::varchar,''),coalesce(close_reason::varchar,''),coalesce(clinical_outcome::varchar,'')),256) as episode_hashdiff,
     sha2(concat_ws('|',sha2('BRIGHTPATH|' || intake_key::varchar,256),sha2('BRIGHTPATH|' || episode_key::varchar,256)),256) as referral_episode_lk
-from {{ source('brightpath_raw', 'brightpath_episodes') }}
+from source

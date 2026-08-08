@@ -1,3 +1,17 @@
+with source as (
+
+    select
+        "outcome_score_key" as outcome_score_key,
+        "session_key" as session_key,
+        "measure_name" as measure_name,
+        "score_value" as score_value,
+        "score_date" as score_date,
+        "created_ts" as created_ts,
+        "modified_ts" as modified_ts
+    from {{ source('brightpath_raw', 'brightpath_outcome_scores') }}
+
+)
+
 select
     outcome_score_key::varchar as source_outcome_score_id,
     'BRIGHTPATH|' || outcome_score_key::varchar as outcome_score_bk,
@@ -13,4 +27,4 @@ select
     current_timestamp()::timestamp_ntz as dbt_loaded_at,
     sha2(concat_ws('|',coalesce(measure_name::varchar,''),coalesce(score_value::varchar,''),coalesce(score_date::varchar,'')),256) as outcome_score_hashdiff,
     sha2(concat_ws('|',sha2('BRIGHTPATH|' || session_key::varchar,256),sha2('BRIGHTPATH|' || outcome_score_key::varchar,256)),256) as session_outcome_score_lk
-from {{ source('brightpath_raw', 'brightpath_outcome_scores') }}
+from source

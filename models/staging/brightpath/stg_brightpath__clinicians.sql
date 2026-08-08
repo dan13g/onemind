@@ -1,3 +1,20 @@
+with source as (
+
+    select
+        "clinician_key" as clinician_key,
+        "clinician_ref" as clinician_ref,
+        "full_name" as full_name,
+        "role_title" as role_title,
+        "registration_body" as registration_body,
+        "registration_no" as registration_no,
+        "city" as city,
+        "status" as status,
+        "created_ts" as created_ts,
+        "modified_ts" as modified_ts
+    from {{ source('brightpath_raw', 'brightpath_clinicians') }}
+
+)
+
 select
     clinician_key::varchar as source_clinician_id,
     'BRIGHTPATH|' || clinician_key::varchar as clinician_bk,
@@ -16,4 +33,4 @@ select
     'BRIGHTPATH' as record_source,
     current_timestamp()::timestamp_ntz as dbt_loaded_at,
     sha2(concat_ws('|',coalesce(full_name::varchar,''),coalesce(role_title::varchar,''),coalesce(registration_body::varchar,''),coalesce(registration_no::varchar,''),coalesce(city::varchar,''),coalesce(status::varchar,'')),256) as clinician_hashdiff
-from {{ source('brightpath_raw', 'brightpath_clinicians') }}
+from source
