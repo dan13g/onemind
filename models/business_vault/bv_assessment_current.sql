@@ -1,0 +1,1 @@
+select assessment_hk, assessment_at, assessment_type, accepted_for_treatment, record_source from {{ ref('sat_assessment_onemind') }} qualify row_number() over(partition by assessment_hk order by source_updated_at desc, load_datetime desc)=1

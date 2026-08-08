@@ -1,0 +1,23 @@
+select
+    session_key::varchar as source_session_id,
+    'BRIGHTPATH|' || session_key::varchar as session_bk,
+    sha2('BRIGHTPATH|' || session_key::varchar,256) as session_hk,
+    sha2('BRIGHTPATH|' || episode_key::varchar,256) as episode_hk,
+    iff(clinician_key is null, null, sha2('BRIGHTPATH|' || clinician_key::varchar,256)) as clinician_hk,
+    episode_key::varchar as episode_id,
+    clinician_key::varchar as clinician_id,
+    starts_at as session_start_at,
+    dateadd('minute',duration_minutes,starts_at) as session_end_at,
+    duration_minutes,
+    session_type,
+    contact_method as delivery_channel,
+    status_code as attendance_status,
+    notes_entered_flag as clinical_notes_entered,
+    created_ts::timestamp_ntz as source_created_at,
+    modified_ts::timestamp_ntz as source_updated_at,
+    'BRIGHTPATH' as record_source,
+    current_timestamp()::timestamp_ntz as dbt_loaded_at,
+    sha2(concat_ws('|',coalesce(starts_at::varchar,''),coalesce(duration_minutes::varchar,''),coalesce(session_type::varchar,''),coalesce(contact_method::varchar,''),coalesce(status_code::varchar,''),coalesce(notes_entered_flag::varchar,'')),256) as session_hashdiff,
+    sha2(concat_ws('|',sha2('BRIGHTPATH|' || episode_key::varchar,256),sha2('BRIGHTPATH|' || session_key::varchar,256)),256) as episode_session_lk,
+    sha2(concat_ws('|',sha2('BRIGHTPATH|' || session_key::varchar,256),iff(clinician_key is null, null, sha2('BRIGHTPATH|' || clinician_key::varchar,256))),256) as session_clinician_lk
+from {{ source('brightpath_raw', 'brightpath_sessions') }}

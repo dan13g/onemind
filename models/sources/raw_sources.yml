@@ -2,37 +2,69 @@ version: 2
 
 sources:
   - name: onemind_raw
-    description: OneMind operational tables landed by Fivetran.
+    description: OneMind operational tables landed unchanged by Fivetran.
     database: ONEMIND_RAW_DB
     schema: public
-    quoting:
-      schema: true
-      identifier: true
+    quoting: {schema: true, identifier: true}
     tables:
+      - name: onemind_services
+        identifier: onemind_services
+      - name: onemind_organisations
+        identifier: onemind_organisations
+      - name: onemind_locations
+        identifier: onemind_locations
+      - name: onemind_teams
+        identifier: onemind_teams
+      - name: onemind_clinicians
+        identifier: onemind_clinicians
       - name: onemind_clients
         identifier: onemind_clients
-        description: OneMind source-system clients.
-        columns:
-          - name: client_id
-            quote: true
-            tests:
-              - not_null
-              - unique
+      - name: onemind_referrals
+        identifier: onemind_referrals
+      - name: onemind_assessments
+        identifier: onemind_assessments
+      - name: onemind_episodes
+        identifier: onemind_episodes
+      - name: onemind_waitlist_events
+        identifier: onemind_waitlist_events
+      - name: onemind_sessions
+        identifier: onemind_sessions
+      - name: onemind_care_plan_goals
+        identifier: onemind_care_plan_goals
+      - name: onemind_risk_assessments
+        identifier: onemind_risk_assessments
+      - name: onemind_outcome_scores
+        identifier: onemind_outcome_scores
+      - name: onemind_discharges
+        identifier: onemind_discharges
 
   - name: brightpath_raw
-    description: BrightPath acquisition tables landed by Fivetran.
+    description: BrightPath acquisition tables landed unchanged by Fivetran.
     database: ONEMIND_RAW_DB
     schema: public
-    quoting:
-      schema: true
-      identifier: true
+    quoting: {schema: true, identifier: true}
     tables:
+      - name: brightpath_acquisition_metadata
+        identifier: brightpath_acquisition_metadata
+      - name: brightpath_organisations
+        identifier: brightpath_organisations
+      - name: brightpath_services
+        identifier: brightpath_services
+      - name: brightpath_clinicians
+        identifier: brightpath_clinicians
       - name: brightpath_clients
         identifier: brightpath_clients
-        description: BrightPath source-system clients.
-        columns:
-          - name: client_key
-            quote: true
-            tests:
-              - not_null
-              - unique
+      - name: brightpath_referrals
+        identifier: brightpath_referrals
+      - name: brightpath_episodes
+        identifier: brightpath_episodes
+      - name: brightpath_episode_status_history
+        identifier: brightpath_episode_status_history
+      - name: brightpath_sessions
+        identifier: brightpath_sessions
+      - name: brightpath_care_plan_goals
+        identifier: brightpath_care_plan_goals
+      - name: brightpath_risk_assessments
+        identifier: brightpath_risk_assessments
+      - name: brightpath_outcome_scores
+        identifier: brightpath_outcome_scores

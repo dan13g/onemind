@@ -1,51 +1,43 @@
 name: 'onemind'
-version: '1.0.0'
+version: '2.0.0'
 config-version: 2
-
 profile: 'default'
-
 quoting:
   database: false
   schema: true
   identifier: false
-
 model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
-
 target-path: "target"
-clean-targets:
-  - "target"
-  - "dbt_packages"
-
+clean-targets: ["target", "dbt_packages"]
 models:
   onemind:
     staging:
       +database: ONEMIND_ENT_DW
       +schema: STAGING
       +materialized: view
-      +tags: ["client", "staging"]
-
+      +tags: ["staging"]
     raw_vault:
       +database: ONEMIND_ENT_DW
       +schema: RAW_VAULT
-      +tags: ["client", "raw_vault"]
-
+      +tags: ["raw_vault"]
     business_vault:
       +database: ONEMIND_ENT_DW
       +schema: BUSINESS_VAULT
       +materialized: view
-      +tags: ["client", "business_vault"]
-
+      +tags: ["business_vault"]
     dimensional:
       core:
         +database: ONEMIND_DIM_DW
         +schema: CORE
-        +tags: ["client", "dimensional"]
+        +materialized: table
+        +tags: ["dimensional"]
       semantic:
         +database: ONEMIND_DIM_DW
         +schema: SEMANTIC
-        +tags: ["client", "semantic"]
+        +materialized: view
+        +tags: ["semantic"]

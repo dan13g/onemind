@@ -1,0 +1,1 @@
+select onemind_client_hk from {{ ref('bv_client_deterministic_match') }} group by onemind_client_hk having count(*)>1 union all select brightpath_client_hk from {{ ref('bv_client_deterministic_match') }} group by brightpath_client_hk having count(*)>1
